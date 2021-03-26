@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"io/ioutil"
+	"encoding/json"
 )
 
-func (c *Client) Dispatch(request *http.Request) ([]byte, error) {
+func (c *Client) Dispatch(request *http.Request) (map[string]interface {}, error) {
 
 	/**
 	* We have to set headers before we dispatch the http request
@@ -23,5 +24,8 @@ func (c *Client) Dispatch(request *http.Request) ([]byte, error) {
 	body, err := ioutil.ReadAll(response.Body)
 	if err != nil { return nil, err }
 
-	return body, nil
+	var object map[string]interface {}
+	json.Unmarshal(body, &object)
+	return object, nil
+
 }
