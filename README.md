@@ -4,7 +4,7 @@
 
 It's easy to send message to any number using the SDK, all you have to do is the following.
 
-```
+```golang
 import (
     "fmt"
     "github.com/zendlk/go-sdk"
