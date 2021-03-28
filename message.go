@@ -16,10 +16,9 @@ func (c *Client) Message(recipient string, message string) (*Message, error) {
 	* upstream.
 	*/
 	payload := map[string]interface{} {
-		"to": []string { recipient },
-		"type": "sms",
+		"to": recipient,
+		"from": c.Sender,
 		"message": message,
-		"sender": c.Sender,
 	}
 
 	json_object, err := json.Marshal(payload)
