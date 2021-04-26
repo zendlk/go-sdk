@@ -1,24 +1,19 @@
 package zend
 
 type (
-	Client struct {
-		Token   string
-		Sender  string
-		Version string
-		URI     string
-	}
-
 	Message struct {
 		ID uint64
 	}
 
-	OtpTime struct {
+	Times struct {
 		Created uint64
-		Expire  uint64
+		Updated uint64
+		Deleted uint64
+		Expires uint64
 	}
 
 	Otp struct {
 		ID   uint64
-		Time OtpTime
+		Time Times
 	}
 )

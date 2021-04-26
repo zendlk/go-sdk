@@ -8,7 +8,11 @@ import (
 	"net/http"
 )
 
-func (c *Client) Otp(recipient string) (*Otp, error) {
+type OtpService struct {
+	client *Client
+}
+
+func (svc *OtpService) Request(recipient string) (*Otp, error) {
 
 	/**
 	* We have to marshal struct with information containing for
@@ -17,14 +21,15 @@ func (c *Client) Otp(recipient string) (*Otp, error) {
 	 */
 	payload := map[string]string{
 		"to":     recipient,
-		"sender": c.Sender,
+		"sender": svc.client.Sender,
 	}
+
 	json_object, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := http.NewRequest("POST", fmt.Sprintf("%s/v%s/otp/send", c.URI, c.Version), bytes.NewBuffer(json_object))
+	request, err := http.NewRequest("POST", fmt.Sprintf("%s/v%s/otp/send", svc.client.URI, svc.client.Version), bytes.NewBuffer(json_object))
 	if err != nil {
 		return nil, err
 	}
@@ -33,7 +38,7 @@ func (c *Client) Otp(recipient string) (*Otp, error) {
 	* We can now safely dispatch the request to the upstream server
 	* for furthur processing and execution of the task.
 	 */
-	response, err := c.Dispatch(request)
+	response, err := svc.client.Dispatch(request)
 	if err != nil {
 		return nil, err
 	}
@@ -42,12 +47,11 @@ func (c *Client) Otp(recipient string) (*Otp, error) {
 	* Handle the return response according to the API and return the
 	* response data back to the application.
 	 */
-	fmt.Println()
 	if response["status"] == "success" {
 		return &Otp{
 			ID: uint64(response["data"].(map[string]interface{})["otp"].(map[string]interface{})["id"].(float64)),
-			Time: OtpTime{
-				Expire:  uint64(response["data"].(map[string]interface{})["otp"].(map[string]interface{})["expire"].(float64)),
+			Time: Times{
+				Expires: uint64(response["data"].(map[string]interface{})["otp"].(map[string]interface{})["expire"].(float64)),
 				Created: uint64(response["data"].(map[string]interface{})["otp"].(map[string]interface{})["created"].(float64)),
 			},
 		}, nil
