@@ -6,7 +6,8 @@ type Client struct {
 	Version string
 	URI     string
 
-	Otp *OtpService
+	Otp     *OtpService
+	Message *MessageService
 }
 
 func NewClient(token string, sender string) *Client {
@@ -19,6 +20,7 @@ func NewClient(token string, sender string) *Client {
 	}
 
 	c.Otp = &OtpService{client: c}
+	c.Message = &MessageService{client: c}
 
 	return c
 }

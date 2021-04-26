@@ -8,7 +8,11 @@ import (
 	"net/http"
 )
 
-func (c *Client) Message(recipient string, message string) (*Message, error) {
+type MessageService struct {
+	client *Client
+}
+
+func (svc *MessageService) Send(recipient string, message string) (*Message, error) {
 
 	/**
 	* We have to marshal struct with information containing for
@@ -17,7 +21,7 @@ func (c *Client) Message(recipient string, message string) (*Message, error) {
 	 */
 	payload := map[string]interface{}{
 		"to":      recipient,
-		"from":    c.Sender,
+		"from":    svc.client.Sender,
 		"message": message,
 	}
 
@@ -26,7 +30,7 @@ func (c *Client) Message(recipient string, message string) (*Message, error) {
 		return nil, err
 	}
 
-	request, err := http.NewRequest("POST", fmt.Sprintf("%s/v%s/message", c.URI, c.Version), bytes.NewBuffer(json_object))
+	request, err := http.NewRequest("POST", fmt.Sprintf("%s/v%s/message", svc.client.URI, svc.client.Version), bytes.NewBuffer(json_object))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +39,7 @@ func (c *Client) Message(recipient string, message string) (*Message, error) {
 	* We can now safely dispatch the request to the upstream server
 	* for furthur processing and execution of the task.
 	 */
-	response, err := c.Dispatch(request)
+	response, err := svc.client.Dispatch(request)
 	if err != nil {
 		return nil, err
 	}
