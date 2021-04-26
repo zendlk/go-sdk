@@ -11,7 +11,7 @@ import (
 )
 
 Zend := zend.NewClient("{_token_}", "{_masking_}")
-message, err := Zend.Message("+94777123456", "Message text here")
+message, err := Zend.Message.Send("+94777123456", "Message text here")
 if err != nil { fmt.Println(err) }
 fmt.Println( message )
 ```
