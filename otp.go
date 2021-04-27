@@ -19,17 +19,15 @@ func (svc *OtpService) Send(recipient string) (*Otp, error) {
 	* message endpoint to provide it as the request body to the
 	* upstream.
 	 */
-	payload := map[string]string{
+	payload, err := json.Marshal(map[string]string{
 		"to":     recipient,
 		"sender": svc.client.Sender,
-	}
-
-	json_object, err := json.Marshal(payload)
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	request, err := http.NewRequest("POST", fmt.Sprintf("%s/v%s/otp/send", svc.client.URI, svc.client.Version), bytes.NewBuffer(json_object))
+	request, err := http.NewRequest("POST", fmt.Sprintf("%s/v%s/otp/send", svc.client.URI, svc.client.Version), bytes.NewBuffer(payload))
 	if err != nil {
 		return nil, err
 	}
